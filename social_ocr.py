@@ -12,21 +12,19 @@ import sys
 import time
 import argparse
 from datetime import datetime, timedelta
-
+# 添加项目根目录到Python路径
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import paramiko
 import pytz
 
 from core.logger import logger
 from db.pipeline import run_data_processing_pipeline
 
-# 添加项目根目录到Python路径
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from dotenv import load_dotenv
 from core.run import process_images
 from db.data_sync import sync_explore_data_to_remote
 
-# 添加项目根目录到Python路径
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv()
 
 
