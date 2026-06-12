@@ -176,11 +176,11 @@ def run_sync_task():
         run_data_processing_pipeline(days=day)
         # 数据同步
         sync_explore_data_to_remote(table_name='s_xhs_data_overview_traffic_analysis'
-                                    , remote_table_name='s_xhs_data_overview_traffic_analysis'
+                                    , remote_table_name='social_s_xhs_data_overview_traffic_analysis'
                                     , time_filter={"column": "采集日期", "days": day})
 
         sync_explore_data_to_remote(table_name='s_tiktok_analysis_overview_ocr'
-                                    , remote_table_name='s_xhs_data_overview_traffic_analysis'
+                                    , remote_table_name='social_s_xhs_data_overview_traffic_analysis'
                                     , time_filter={"column": "采集日期", "days": day})
 
         logger.info(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 数据同步任务执行完成")

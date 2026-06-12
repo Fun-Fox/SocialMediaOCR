@@ -362,7 +362,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
 
                         # 构建INSERT语句
                         insert_sql = """
-                        INSERT INTO s_xhs_data_overview_traffic_analysis 
+                        INSERT INTO social_s_xhs_data_overview_traffic_analysis 
                         (device_ip, account_id, source_type, url, title, collection_time, view_count, shares, comments, likes, type)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON DUPLICATE KEY UPDATE
@@ -411,7 +411,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
 
                         # 构建INSERT语句
                         insert_sql = """
-                        INSERT INTO s_xhs_data_overview_traffic_analysis 
+                        INSERT INTO social_s_xhs_data_overview_traffic_analysis 
                         (device_ip, account_id, source_type, url, title, collection_time, view_count, collects, comments, likes, type)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON DUPLICATE KEY UPDATE
