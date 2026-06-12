@@ -14,12 +14,14 @@ import argparse
 from datetime import datetime, timedelta
 # 添加项目根目录到Python路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# 添加项目根目录到Python路径（必须放在最前面，优先级最高）
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import paramiko
 import pytz
 
 from core.logger import logger
 from db.pipeline import run_data_processing_pipeline
-
 
 from dotenv import load_dotenv
 from core.run import process_images
