@@ -1,6 +1,6 @@
 -- social_media.s_xhs_data_overview_traffic_analysis definition
 
-CREATE TABLE `s_xhs_data_overview_traffic_analysis` (
+CREATE TABLE `social_s_xhs_data_overview_traffic_analysis` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增ID 主键，非空',
   `device_ip` text COLLATE utf8mb4_unicode_ci COMMENT '设备IP',
   `account_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '平台账号',
@@ -29,9 +29,9 @@ CREATE TABLE `s_xhs_data_overview_traffic_analysis` (
 
 
 
--- social_media.s_xhs_user_info_ocr definition
+-- social_media.social_s_xhs_user_info_ocr definition
 
-CREATE TABLE `s_xhs_user_info_ocr` (
+CREATE TABLE `social_s_xhs_user_info_ocr` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `nickname` text COLLATE utf8mb4_unicode_ci COMMENT '昵称',
   `device_ip` text COLLATE utf8mb4_unicode_ci COMMENT '设备id',

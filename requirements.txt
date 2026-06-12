@@ -10,6 +10,7 @@ schedule>=1.2.2
 configparser>=7.2.0
 loguru>=0.7.3
 pytz
+paramiko>=3.5.0
 
 #playwright>=1.55.0
 

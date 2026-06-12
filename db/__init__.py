@@ -28,7 +28,7 @@ def save_userinfo_data(app_name, user_info, ip_port_dir, account_id, collect_tim
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     create_table_sql = f'''
-            CREATE TABLE IF NOT EXISTS s_xhs_user_info_ocr (
+            CREATE TABLE IF NOT EXISTS social_s_xhs_user_info_ocr (
                 "数据来源" TEXT,
                 "设备IP" TEXT,
                 "账号ID" TEXT,
@@ -50,7 +50,7 @@ def save_userinfo_data(app_name, user_info, ip_port_dir, account_id, collect_tim
         source_type = "1948663593734004737"
 
     sql_str = f"""
-            INSERT OR IGNORE INTO s_xhs_user_info_ocr (
+            INSERT OR IGNORE INTO social_s_xhs_user_info_ocr (
                 "设备IP","数据来源","账号ID","账号昵称","采集日期", "关注数","粉丝数", "获赞与收藏","链接"
             ) VALUES (?,?,?,?,?,?,?,?,?)
         """
