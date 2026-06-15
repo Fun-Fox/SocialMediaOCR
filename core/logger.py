@@ -24,7 +24,7 @@ logger.remove()
 # 控制台输出：仅WARNING及以上，减少干扰
 logger.add(
     sink=sys.stderr,
-    level="WARNING",
+    level="INFO",
     format="<level>{level}</level> | {message}",
     colorize=True,
 )

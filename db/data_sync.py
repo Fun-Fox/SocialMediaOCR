@@ -327,7 +327,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
         try:
             with mysql_conn.cursor() as cursor:
                 # 确保表存在
-                table_name = 's_xhs_data_overview_traffic_analysis'
+                table_name = 'social_s_xhs_data_overview_traffic_analysis'
 
                 # 检查表是否存在
                 try:
@@ -527,6 +527,10 @@ def sync_user_info_to_remote(user_info_list, app_name=None, ip_port=None, accoun
                     follows = str(user_info.get("follows", "0"))
                     fans = str(user_info.get("fans", "0"))
                     interaction = user_info.get("interaction")
+                    try:
+                        interaction = int(interaction) if interaction not in (None, '') else 0
+                    except (ValueError, TypeError):
+                        interaction = 0
                     collection_time = user_info.get("collect_time", "")
 
                     # 设备IP和来源类型

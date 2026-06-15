@@ -217,7 +217,8 @@ def process_images():
                                     user_info['nickname'] = profile_data.get('nickname', '')
                                     user_info['follows'] = profile_data.get('follow_count', '')
                                     user_info['fans'] = profile_data.get('follower_count', '')
-                                    user_info['interaction'] = profile_data.get('like_count', '')  # 获赞与收藏
+                                    user_info['interaction'] = convert_chinese_numbers(
+                                        profile_data.get('like_count', ''))
                                     user_info['collect_time'] = collect_date  # 添加采集时间
                                     user_info['profile_url'] = author_profile_url  # 添加个人主页链接
 
@@ -678,16 +679,22 @@ def imread_with_pil(path):
 
 def convert_chinese_numbers(text):
     """
-    转换中文数字表示（如：1.5万）为实际数值
+    转换中文数字表示（如：1.5万）为实际数值，始终返回 int
     """
+    if text is None or text == '':
+        return 0
+    text = str(text).replace(',', '')
     if '万' in text:
         number_part = re.sub(r'[^\d.]', '', text)
         try:
             number = float(number_part)
             return int(number * 10000)
         except ValueError:
-            return text
-    return text
+            return 0
+    try:
+        return int(float(text))
+    except (ValueError, TypeError):
+        return 0
 
 
 if __name__ == "__main__":
