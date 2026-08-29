@@ -21,11 +21,9 @@ import paramiko
 import pytz
 
 from core.logger import logger
-from db.pipeline import run_data_processing_pipeline
 
 from dotenv import load_dotenv
 from core.run import process_images
-from db.data_sync import sync_explore_data_to_remote
 
 load_dotenv()
 
@@ -167,25 +165,9 @@ def run_ocr_task():
 
 def run_sync_task():
     """
-    执行数据同步任务
+    执行数据同步任务（数据已在OCR处理过程中实时同步到远程数据库）
     """
-    logger.info(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 开始执行数据同步任务...")
-    try:
-        # 本地数据加工
-        day = int(os.getenv("OCR_RECENT_DAYS", "2"))
-        run_data_processing_pipeline(days=day)
-        # 数据同步
-        sync_explore_data_to_remote(table_name='s_xhs_data_overview_traffic_analysis'
-                                    , remote_table_name='s_xhs_data_overview_traffic_analysis'
-                                    , time_filter={"column": "采集日期", "days": day})
-
-        sync_explore_data_to_remote(table_name='s_tiktok_analysis_overview_ocr'
-                                    , remote_table_name='s_xhs_data_overview_traffic_analysis'
-                                    , time_filter={"column": "采集日期", "days": day})
-
-        logger.info(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 数据同步任务执行完成")
-    except Exception as e:
-        logger.error(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 数据同步任务执行出错: {e}")
+    logger.info(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 数据已在OCR处理过程中实时同步到远程数据库")
 
 
 def run_all_tasks(sync_enabled=True):

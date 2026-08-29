@@ -8,9 +8,9 @@ from core.logger import logger
 # from core.ocr import sort_text_lines_by_surya_position, ocr, sort_text_lines_by_paddle_position
 from core.ocr import sort_text_lines_by_surya_position, sort_text_lines_by_paddle_position
 # 调用同步函数将数据同步到远程数据库
-from db.data_sync import sync_post_data_to_remote, sync_user_info_to_remote
+from db.data_sync import sync_post_data_to_remote, sync_user_info_to_remote, sync_ocr_records_to_remote
 # 引入数据库模块
-from db import save_ocr_data
+from db import build_ocr_record
 import time
 import configparser
 from datetime import datetime, timedelta
@@ -27,6 +27,7 @@ root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ocr_root = os.getenv("OCR_IMAGES_PATH", os.path.join(root_dir, "images"))
 ocr_engine = os.getenv("OCR_ENGINE", "surya")
 
+ocr = None
 if ocr_engine == "PaddleOCR":
     from core.ppocr_api import GetOcrApi
 
@@ -34,11 +35,14 @@ if ocr_engine == "PaddleOCR":
     ocr_engine_path = os.getenv("OCR_ENGINE_PATH")
     if not ocr_engine_path:
         logger.error("OCR_ENGINE_PATH 环境变量未设置")
-
-    if not os.path.exists(ocr_engine_path):
+    elif not os.path.exists(ocr_engine_path):
         logger.error(f"OCR引擎路径不存在: {ocr_engine_path}")
-    # 初始化 OCR 引擎
-    ocr = GetOcrApi(ocr_engine_path)
+    else:
+        # 初始化 OCR 引擎
+        try:
+            ocr = GetOcrApi(ocr_engine_path)
+        except Exception as e:
+            logger.error(f"初始化OCR引擎失败: {e}")
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -122,6 +126,9 @@ def process_images():
     处理OCR目录下的所有图片
     """
     if ocr_engine == "PaddleOCR":
+        if ocr is None:
+            logger.error("OCR引擎未初始化，无法处理图片")
+            return
         if ocr.getRunningMode() == "local":
             logger.info(f"初始化OCR成功，进程号为{ocr.ret.pid}")
         elif ocr.getRunningMode() == "remote":
@@ -195,6 +202,7 @@ def process_images():
                         continue
 
                     logger.info(f"处理最近{day}天的目录: {root}")
+                    post_records = {}
                     for filename in files:
                         # 构建图片路径
                         file_path = os.path.join(root, filename)
@@ -508,10 +516,17 @@ def process_images():
                             else:
                                 content_type = "图文"
 
-                            save_ocr_data(tag, post_title, note_link, content_type, ocr_texts, index_mapping_data,
-                                          collect_date,
-                                          ip_port_dir,
-                                          account_id, app_name)
+                            record = build_ocr_record(tag, post_title, note_link, content_type, ocr_texts, index_mapping_data,
+                                                      collect_date,
+                                                      ip_port_dir,
+                                                      account_id, app_name)
+                            key = (note_link, post_title, account_id, collect_date)
+                            if key not in post_records:
+                                post_records[key] = record
+                            else:
+                                for field, value in record.items():
+                                    if value != '':
+                                        post_records[key][field] = value
                         elif filename.endswith('.png') and app_name in ("tiktok"):
                             logger.info(f"\n====开始处理tiktok图片====\n{file_path}")
                             tag, note_link = os.path.basename(filename).replace(".png", "").split('#')
@@ -646,10 +661,21 @@ def process_images():
                                     continue
                                 note_link = note_link.replace('*', "/")
 
-                                save_ocr_data(tag, '', note_link, "tiktok视频", ocr_texts, index_mapping_data,
-                                              collect_date,
-                                              ip_port_dir,
-                                              account_id, app_name)
+                                record = build_ocr_record(tag, '', note_link, "tiktok视频", ocr_texts, index_mapping_data,
+                                                          collect_date,
+                                                          ip_port_dir,
+                                                          account_id, app_name)
+                                key = (note_link, '', account_id, collect_date)
+                                if key not in post_records:
+                                    post_records[key] = record
+                                else:
+                                    for field, value in record.items():
+                                        if value != '':
+                                            post_records[key][field] = value
+
+                    if post_records:
+                        logger.info(f"正在同步 {len(post_records)} 条OCR记录到远程数据库...")
+                        sync_ocr_records_to_remote(list(post_records.values()), app_name)
 
 
 # 结束 OCR 引擎
