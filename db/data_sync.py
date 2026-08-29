@@ -327,7 +327,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
         try:
             with mysql_conn.cursor() as cursor:
                 # 确保表存在
-                table_name = 'social_s_xhs_data_overview_traffic_analysis'
+                table_name = 's_xhs_data_overview_traffic_analysis'
 
                 # 检查表是否存在
                 try:
@@ -362,7 +362,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
 
                         # 构建INSERT语句
                         insert_sql = """
-                        INSERT INTO social_s_xhs_data_overview_traffic_analysis 
+                        INSERT INTO s_xhs_data_overview_traffic_analysis 
                         (device_ip, account_id, source_type, url, title, collection_time, view_count, shares, comments, likes, type)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON DUPLICATE KEY UPDATE
@@ -411,7 +411,7 @@ def sync_post_data_to_remote(post_data_list, app_name, account_id=None):
 
                         # 构建INSERT语句
                         insert_sql = """
-                        INSERT INTO social_s_xhs_data_overview_traffic_analysis 
+                        INSERT INTO s_xhs_data_overview_traffic_analysis 
                         (device_ip, account_id, source_type, url, title, collection_time, view_count, collects, comments, likes, type)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON DUPLICATE KEY UPDATE
@@ -502,7 +502,7 @@ def sync_user_info_to_remote(user_info_list, app_name=None, ip_port=None, accoun
         try:
             with mysql_conn.cursor() as cursor:
                 # 确保表存在
-                table_name = 'social_s_xhs_user_info_ocr'
+                table_name = 's_xhs_user_info_ocr'
 
                 # 检查表是否存在
                 try:
@@ -544,7 +544,7 @@ def sync_user_info_to_remote(user_info_list, app_name=None, ip_port=None, accoun
 
                     # 构建INSERT语句
                     insert_sql = """
-                    INSERT INTO social_s_xhs_user_info_ocr 
+                    INSERT INTO s_xhs_user_info_ocr 
                     (device_ip, account_id, source_type, url, nickname, interaction, follows, fans, collection_time)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON DUPLICATE KEY UPDATE

@@ -221,7 +221,6 @@ def process_images():
                                         profile_data.get('like_count', ''))
                                     user_info['collect_time'] = collect_date  # 添加采集时间
                                     user_info['profile_url'] = author_profile_url  # 添加个人主页链接
-
                             try:
                                 # 检查是否成功获取到用户信息（判断user_info是否包含有效数据）
                                 if isinstance(user_info, dict) and user_info.get('nickname'):

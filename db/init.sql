@@ -31,7 +31,7 @@ CREATE TABLE `social_s_xhs_data_overview_traffic_analysis` (
 
 -- social_media.social_s_xhs_user_info_ocr definition
 
-CREATE TABLE `social_s_xhs_user_info_ocr` (
+CREATE TABLE `s_xhs_user_info_ocr` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `nickname` text COLLATE utf8mb4_unicode_ci COMMENT '昵称',
   `device_ip` text COLLATE utf8mb4_unicode_ci COMMENT '设备id',
