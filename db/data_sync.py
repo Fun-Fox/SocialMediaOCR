@@ -117,6 +117,10 @@ def sync_ocr_records_to_remote(records: list, app_name: str):
                 if not en_record:
                     continue
 
+                if not en_record.get('url'):
+                    logger.warning(f"OCR记录缺少url（作品标题: {en_record.get('title', '未知')}），跳过同步")
+                    continue
+
                 columns = list(en_record.keys())
                 values = list(en_record.values())
 
