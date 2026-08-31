@@ -161,6 +161,32 @@ class TestOcrPipeline(unittest.TestCase):
         self.assertEqual(post_records[key]["点赞数"], "120")
         self.assertEqual(post_records[key]["平均观看时长"], "30s")
 
+    def test_validate_ocr_texts(self):
+        from core.run import validate_ocr_texts
+
+        # 1. 成功案例
+        self.assertTrue(validate_ocr_texts(["100", "50", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+        
+        # 2. 数量不匹配
+        self.assertFalse(validate_ocr_texts(["100", "50"], ["曝光数", "观看数", "封面点击率"]))
+
+        # 3. 包含空值或纯空格
+        self.assertFalse(validate_ocr_texts(["100", "", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+        self.assertFalse(validate_ocr_texts(["100", "  ", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+
+        # 4. 包含纯特殊噪音符号
+        self.assertFalse(validate_ocr_texts(["100", "-", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+        self.assertFalse(validate_ocr_texts(["~", "50", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+
+        # 5. 数值/比例/时长字段不含数字 (包括纯中文、纯字母)
+        self.assertFalse(validate_ocr_texts(["无数据", "50", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+        self.assertFalse(validate_ocr_texts(["100", "50", "暂无"], ["曝光数", "观看数", "封面点击率"]))
+        self.assertFalse(validate_ocr_texts(["abc", "50", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+        self.assertFalse(validate_ocr_texts(["100", "XYZ", "5.2%"], ["曝光数", "观看数", "封面点击率"]))
+
+        # 6. 非数值/纯文本字段可以不含数字
+        self.assertTrue(validate_ocr_texts(["首页推荐"], ["观看来源-首页推荐"]))
+
 
 if __name__ == "__main__":
     unittest.main()

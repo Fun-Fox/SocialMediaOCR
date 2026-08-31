@@ -491,9 +491,9 @@ def process_images():
                                             logger.info(f"流量分析结果：{ocr_texts}")
                                         else:
                                             ocr_texts = []
-                                    if len(ocr_texts) != len(index_mapping_data):
+                                    if not validate_ocr_texts(ocr_texts, index_mapping_data):
                                         logger.warning(
-                                            f"{filename}：识别到的数据个数不匹配，尝试使用蒙版库中其余蒙版")
+                                            f"{filename}：识别到的数据无效或不匹配，尝试使用蒙版库中其余蒙版")
                                         # logger.info(f"{index_mapping_data}")
                                         continue
                                     ocr_success = True
@@ -643,9 +643,9 @@ def process_images():
                                             if text:
                                                 ocr_texts.append(text)
                                         logger.info(f"OCR识别结果：{ocr_texts}")
-                                        if len(ocr_texts) != len(index_mapping_data):
+                                        if not validate_ocr_texts(ocr_texts, index_mapping_data):
                                             logger.warning(
-                                                f"{filename}：识别到的数据个数不匹配，尝试使用蒙版库中其余蒙版")
+                                                f"{filename}：识别到的数据无效或不匹配，尝试使用蒙版库中其余蒙版")
                                             # logger.info(f"{index_mapping_data}")
                                             continue
                                         ocr_success = True
@@ -720,6 +720,33 @@ def convert_chinese_numbers(text):
         return int(float(text))
     except (ValueError, TypeError):
         return 0
+
+
+def validate_ocr_texts(ocr_texts, index_mapping_data) -> bool:
+    """
+    方案二：对识别出的数据进行快速有效性校验。
+    检查项：
+    1. 数量必须匹配。
+    2. 不能全是空值或纯符号（过滤噪音）。
+    3. 数值/比例/时长字段必须包含至少一个数字。
+    """
+    if len(ocr_texts) != len(index_mapping_data):
+        return False
+
+    for i, field_name in enumerate(index_mapping_data):
+        val = ocr_texts[i].strip()
+        # 1. 不能为空值
+        if not val:
+            return False
+        # 2. 不能全是特殊符号 (如 "-", "~", "*", "/")
+        if re.match(r'^[^\w%]+$', val):
+            return False
+        # 3. 数值相关字段校验：必须包含至少一个数字字符
+        # if any(keyword in field_name for keyword in ["数", "量", "评论", "点赞", "收藏", "分享", "率", "占比", "时长"]):
+        if not any(char.isdigit() for char in val):
+            return False
+
+    return True
 
 
 if __name__ == "__main__":
